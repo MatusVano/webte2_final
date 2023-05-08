@@ -46,7 +46,15 @@ try {
                     <a class="btn btn-outline-primary ml-1" href="#">EMPTY</a>
                 </li>
 
-                <?php if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){ ?>
+                <?php
+                if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+                    if($_SESSION["type"] === "Teacher"){ ?>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-primary ml-1" href="uploadFile.php">Nahraj Subor</a>
+                        </li>
+                        <?php
+                    }
+                    ?>
                     <li class="nav-item">
                         <a class="btn btn-outline-primary ml-1" href="#"><?php echo $_SESSION["first_name"] . " " . $_SESSION["surname"]; ?></a>
                     </li>
@@ -54,7 +62,8 @@ try {
                     <li class="nav-item">
                         <a class="btn btn-outline-primary ml-1" href="authentification/logout.php">Odhlas sa</a>
                     </li>
-                <?php }else{ ?>
+                <?php
+                }else{ ?>
                     <li class="nav-item">
                         <a class="btn btn-outline-primary ml-1" href="authentification/index.php">Prihlás sa</a>
                     </li>

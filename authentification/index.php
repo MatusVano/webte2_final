@@ -22,9 +22,9 @@ try {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (empty(trim($_POST['username'])))
-            $err_msg .= "<p>Prosim zadaj Prihlasovacie Meno</p>";
+            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosim zadaj prihlasovacie meno</p>";
         if (empty(trim($_POST['password'])))
-            $err_msg .= "<p>Prosim zadaj Heslo</p>";
+            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosim zadaj Heslo</p";
 
         if ($err_msg == ""){
 
@@ -52,11 +52,11 @@ try {
                         // Presmeruj pouzivatela na zabezpecenu stranku.
                         header("location: ../index.php");
                     } else
-                        $err_msg .= "<p>Nespravne prihlasovacie meno alebo heslo.</p>";
+                        $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Nespravne prihlasovacie meno alebo heslo.</p>";
                 } else
-                    $err_msg .= "<p>Nespravne prihlasovacie meno alebo heslo.</p>";
+                    $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Nespravne prihlasovacie meno alebo heslo.</p>";
             } else
-                $err_msg .= "<p>Ups. Nieco sa pokazilo!, Skus to prosim neskor</p>";
+                $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Ups. Nieco sa pokazilo!, Skus to prosim neskor</p>";
 
             unset($stmt);
             unset($db);
@@ -103,6 +103,10 @@ try {
 
     <div class="container-md">
         <h1>Prihlas sa</h1>
+
+        <?php
+        echo $err_msg;
+        ?>
 
         <form action="#" method="post">
             <input type="hidden" name="type" value="classic">
