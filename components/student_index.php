@@ -33,7 +33,7 @@ if (!empty($_POST) && !empty($_POST["user_id"]) && !empty($_POST["files"])) {
     } catch (PDOException $e) {
         $err_msg .= "<p class='alert alert-danger' role='alert'>Nepodarilo sa vygenerovať príklady!</p>";
     }
-} else if (empty($_POST["files"])) {
+} else if (!empty($_POST) && !empty($_POST["user_id"]) && empty($_POST["files"])) {
     $err_msg .= "<p class='alert alert-danger' role='alert'>Nevybrali ste žiadne súbory na generovanie!</p>";
 }
 
@@ -98,7 +98,7 @@ try {
                     echo '<div class="form-check d-flex flex-row justify-content-start ms-3">';
                     echo '<input class="form-check-input me-2" type="checkbox" name="files[]" value="' . $file["id"] . ':' . $file["source"] . '" id="' . $file["source"] . '">';
                     echo '<label class="form-check-label" for="' . $file["source"] . '">';
-                    echo $file["source"];
+                    echo pathinfo(basename($file["source"]), PATHINFO_FILENAME);
                     echo '</label>';
                     echo '</div>';
                 }
@@ -132,7 +132,7 @@ try {
                     }
 
                     echo '<tr>';
-                    echo '<td>' . $task["source"] . '</td>';
+                    echo '<td>' . pathinfo(basename($task["source"]), PATHINFO_FILENAME) . '</td>';
                     echo '<td>' . $counter . '</td>';
                     echo '<td>';
                     echo '<a href="taskDetail.php?id=' . $task["id"] . '" class="btn btn-primary">Riešiť</a>';
@@ -173,7 +173,7 @@ try {
                     }
 
                     echo '<tr>';
-                    echo '<td>' . $task["source"] . '</td>';
+                    echo '<td>' . pathinfo(basename($task["source"]), PATHINFO_FILENAME) . '</td>';
                     echo '<td>' . $counter . '</td>';
                     echo '<td>' . $task["points_gained"] . '/' . $task["points"] . '</td>';
                     echo '<td>';
