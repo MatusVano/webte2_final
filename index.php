@@ -69,7 +69,7 @@ require_once('utils/parse_tex_file.php');
         } elseif (isset($_SESSION["type"]) && $_SESSION["type"] == "Teacher") {
             include 'components/teacher_index.php';
         } else {
-            header("location: /authentification/index.php");
+            header("location: authentification/index.php");
         }
     ?>
 
