@@ -1,46 +1,5 @@
 <?php
-// Get available files from db
-try {
-    $stmt = $db->prepare("SELECT * FROM files f WHERE f.active = 1");
-    $stmt->execute();
-    $available_files = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Remove files that have already been used
-    $stmt = $db->prepare("SELECT file_id FROM test WHERE student_id = :user_id");
-    $stmt->bindParam(':user_id', $_SESSION["user_id"]);
-    $stmt->execute();
-    $used_files = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    foreach ($available_files as $key => $file) {
-        foreach ($used_files as $used_file) {
-            if ($file["id"] == $used_file["file_id"]) {
-                unset($available_files[$key]);
-            }
-        }
-    }
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-}
-
-// Get available tasks from db
-try {
-    $stmt = $db->prepare("SELECT t.id, f.source, t.answer  FROM test t INNER JOIN files f ON t.file_id = f.id WHERE student_id = :user_id AND t.points_gained IS NULL");
-    $stmt->bindParam(':user_id', $_SESSION["user_id"]);
-    $stmt->execute();
-    $student_tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-}
-
-// Get task history from db
-try {
-    $stmt = $db->prepare("SELECT t.id, t.points_gained, f.source, f.points  FROM test t INNER JOIN files f ON t.file_id = f.id WHERE student_id = :user_id AND t.points_gained IS NOT NULL");
-    $stmt->bindParam(':user_id', $_SESSION["user_id"]);
-    $stmt->execute();
-    $student_history = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-}
+$err_msg = "";
 
 // Generate exercises
 if (!empty($_POST) && !empty($_POST["user_id"]) && !empty($_POST["files"])) {
@@ -70,14 +29,64 @@ if (!empty($_POST) && !empty($_POST["user_id"]) && !empty($_POST["files"])) {
         }
 
         // refresh page
-        header("Refresh:0");
+        $err_msg .= "<p class='alert alert-success' role='alert'>Príklady boli úspešne vygenerované!</p>";
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        $err_msg .= "<p class='alert alert-danger' role='alert'>Nepodarilo sa vygenerovať príklady!</p>";
     }
+} else if (empty($_POST["files"])) {
+    $err_msg .= "<p class='alert alert-danger' role='alert'>Nevybrali ste žiadne súbory na generovanie!</p>";
 }
 
+// Get available files from db
+try {
+    $stmt = $db->prepare("SELECT * FROM files f WHERE f.active = 1");
+    $stmt->execute();
+    $available_files = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Remove files that have already been used
+    $stmt = $db->prepare("SELECT file_id FROM test WHERE student_id = :user_id");
+    $stmt->bindParam(':user_id', $_SESSION["user_id"]);
+    $stmt->execute();
+    $used_files = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($available_files as $key => $file) {
+        foreach ($used_files as $used_file) {
+            if ($file["id"] == $used_file["file_id"]) {
+                unset($available_files[$key]);
+            }
+        }
+    }
+} catch (PDOException $e) {
+    $err_msg .= "<p class='alert alert-danger' role='alert'>Nepodarilo sa načítať súbory na generovanie príkladov!</p>";
+}
+
+// Get available tasks from db
+try {
+    $stmt = $db->prepare("SELECT t.id, f.source, t.answer  FROM test t INNER JOIN files f ON t.file_id = f.id WHERE student_id = :user_id AND t.points_gained IS NULL");
+    $stmt->bindParam(':user_id', $_SESSION["user_id"]);
+    $stmt->execute();
+    $student_tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $err_msg .= "<p class='alert alert-danger' role='alert'>Nepodarilo sa načítať príklady na riešenie!</p>";
+}
+
+// Get task history from db
+try {
+    $stmt = $db->prepare("SELECT t.id, t.points_gained, f.source, f.points  FROM test t INNER JOIN files f ON t.file_id = f.id WHERE student_id = :user_id AND t.points_gained IS NOT NULL");
+    $stmt->bindParam(':user_id', $_SESSION["user_id"]);
+    $stmt->execute();
+    $student_history = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $err_msg .= "<p class='alert alert-danger' role='alert'>Nepodarilo sa načítať históriu príkladov!</p>";
+}
 ?>
 <main class="mb-5">
+    <section class="container w-25 mt-5">
+        <?php
+            echo $err_msg;
+        ?>
+    </section>
+
     <section class="container w-25 mt-5">
         <h2 class="mb-3 text-center">Generovanie príkladov</h2>
         <form action="#" method="post" class="d-flex flex-column justify-content-center">
