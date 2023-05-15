@@ -18,13 +18,21 @@ if ($_SESSION["type"] != "Student") {
 
 try {
     $id = $_GET['id'];
-    $query = 'SELECT * FROM `test` WHERE `id` = ' . $id . ' LIMIT 1';
-    $stmt = $db->query($query);
+    $query = "SELECT t.question, t.image, t.answer, t.solution, t.points_gained, f.points FROM test t INNER JOIN files f ON t.file_id = f.id WHERE t.id = :id LIMIT 1";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
     $task = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (empty($task)) {
         header("location: index.php");
     }
+
+    if ($task["points_gained"] == NULL) {
+        header("location: index.php");
+    }
+
+    unset($stmt);
 } catch (PDOException $e) {
     echo $e->getMessage();
 }
@@ -65,7 +73,7 @@ try {
     ?>
 
     <main>
-        <section class="container mt-5 w-50">
+        <section class="container mt-5 mb-5 w-50">
             <h2>Zadanie:</h2>
             <span>
                 <?php
@@ -98,7 +106,7 @@ try {
             <h2 class="mt-5">Hodnotenie:</h2>
             <span>
                 <?php
-                echo $task["points_gained"];
+                echo $task["points_gained"] . "/" . $task["points"];
                 ?>
             </span>
         </section>
