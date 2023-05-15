@@ -1,32 +1,29 @@
 <?php
-
-require_once ("../config.php");
-
-session_start();
-
-// Check if the user is already logged in, if yes then redirect him to welcome page
-if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-    header("location: ../index.php");
-    exit;
-}
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+require_once("../config.php");
+
+session_start();
+
+// Check if the user is already logged in, if yes then redirect him to welcome page
+if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+    header("location: ../index.php");
+    exit;
+}
+
 try {
-    $db = new PDO("mysql:host=$hostname;dbname=$dbname", $username, $password);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $err_msg = "";
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (empty(trim($_POST['username'])))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosim zadaj prihlasovacie meno</p>";
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Prosím zadaj prihlasovacie meno!</p>";
         if (empty(trim($_POST['password'])))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosim zadaj Heslo</p";
+            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosím zadaj heslo!</p";
 
-        if ($err_msg == ""){
+        if ($err_msg == "") {
 
             $sql = "SELECT * FROM account WHERE username = :username";
             $stmt = $db->prepare($sql);
@@ -52,57 +49,46 @@ try {
                         // Presmeruj pouzivatela na zabezpecenu stranku.
                         header("location: ../index.php");
                     } else
-                        $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Nespravne prihlasovacie meno alebo heslo.</p>";
+                        $err_msg .= "<p class='alert alert-danger' role='alert'>Nespravne prihlasovacie meno alebo heslo.</p>";
                 } else
-                    $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Nespravne prihlasovacie meno alebo heslo.</p>";
+                    $err_msg .= "<p class='alert alert-danger' role='alert'>Nespravne prihlasovacie meno alebo heslo.</p>";
             } else
-                $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Ups. Nieco sa pokazilo!, Skus to prosim neskor</p>";
+                $err_msg .= "<p class='alert alert-danger' role='alert'>Ups. Nieco sa pokazilo!, Skus to prosim neskor</p>";
 
             unset($stmt);
             unset($db);
         }
     }
+} catch (PDOException $e) {
+    echo $e->getMessage();
+}
 ?>
 
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Semestrálne zadanie</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <link href="../style.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../style.css">
 </head>
 
-<body class="bg-secondary" style="--bs-bg-opacity: .2;">
-    <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
-        <a class="navbar-brand ml-1" href="../index.php">Final</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="btn btn-outline-primary" href="../index.php">Final</a>
-                </li>
-                <li class="nav-item">
-                    <a class="btn btn-outline-primary ml-1" href="#">EMPTY</a>
-                </li>
-                <li class="nav-item">
-                    <a class="btn btn-outline-primary ml-1" href="#">EMPTY</a>
-                </li>
+<body>
+    <?php
+    if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+        include '../components/loggedin_menu.php';
+    } elseif (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
+        include '../components/loggedin_menu.php';
+    } else {
+        include '../components/loggedout_menu.php';
+    }
+    ?>
 
-                <li class="nav-item">
-                    <a class="btn btn-primary ml-1" href="index.php">Prihlás sa</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container-md">
-        <h1>Prihlas sa</h1>
+    <div class="container w-25 mt-5">
+        <h1>Prihlás sa</h1>
 
         <?php
         echo $err_msg;
@@ -112,7 +98,7 @@ try {
             <input type="hidden" name="type" value="classic">
 
             <div class="mb-3">
-                <label for="InputUsername" class="form-label">Prihlasovacie Meno: </label>
+                <label for="InputUsername" class="form-label">Prihlasovacie meno: </label>
                 <input type="text" name="username" class="form-control" id="InputUsername" required>
             </div>
 
@@ -120,25 +106,17 @@ try {
                 <label for="InputPassword" class="form-label">Heslo: </label>
                 <input type="password" name="password" class="form-control" id="InputPassword" required>
             </div>
-
-            <button type="submit" class="btn btn-primary">Prihlas sa</button>
+            <p>Ešte nemáš účet? <a href="register.php">Zaregistruj sa</a></p>
+            <button type="submit" class="btn btn-primary">Prihlásiť sa</button>
         </form>
-
-        <p>Este nemas ucet? <a href="register.php">Registruj sa</a></p>
     </div>
 
 
 
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 </body>
+
 </html>
-
-    <?php
-} catch (PDOException $e){
-    echo $e->getMessage();
-}
-
-?>

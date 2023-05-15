@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is already logged in, if yes then redirect him to welcome page
-if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     header("location: ../index.php");
     exit;
 }
@@ -14,36 +14,34 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 try {
-    $db = new PDO("mysql:host=$hostname;dbname=$dbname", $username, $password);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $err_msg = "";
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (empty(trim($_POST['first_name'])))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosim zadaj Meno</p>";
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Prosím zadaj Meno!</p>";
         if (empty(trim($_POST['surname'])))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosim zadaj Priezvisko</p>";
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Prosím zadaj Priezvisko!</p>";
         if (empty(trim($_POST['password'])))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosim zadaj Heslo</p>";
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Prosím zadaj Heslo!</p>";
         if (empty(trim($_POST['username'])))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosim zadaj prihlasovacie meno</p>";
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Prosím zadaj Prihlasovacie meno!</p>";
         if (empty(trim($_POST['type'])))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Prosim zadaj Typ uctu</p>";
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Prosím zadaj Typ účtu!</p>";
 
-        if (!preg_match("/^[a-zA-Z]*$/",$_POST['first_name']))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Meno moze obsahovat iba Pismena</p>";
-        if (!preg_match("/^[a-zA-Z]*$/",$_POST['surname']))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Priezvisko moze obsahovat iba Pismena</p>";
-        if (!preg_match("/^[a-zA-Z0-9]*$/",$_POST['password']))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Heslo moze obsahovat iba Pismena a Cisla</p>";
-        if (!preg_match("/^[a-zA-Z0-9]*$/",$_POST['username']))
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Zly format prihlasovacie meno</p>";
+        if (!preg_match("/^[a-zA-Z]*$/", $_POST['first_name']))
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Meno môže obsahovať iba písmená!</p>";
+        if (!preg_match("/^[a-zA-Z]*$/", $_POST['surname']))
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Priezvisko môže obsahovať iba písmená!</p>";
+        if (!preg_match("/^[a-zA-Z0-9]*$/", $_POST['password']))
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Heslo moze obsahovat iba písmená a čísla!</p>";
+        if (!preg_match("/^[a-zA-Z0-9]*$/", $_POST['username']))
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Zlý formát prihlasovacieho mena!</p>";
         if ($_POST['type'] != "Teacher" && $_POST['type'] != "Student")
-            $err_msg .= "<p class='p-3 mb-2 bg-warning text-dark'>Zly typ uctu</p>";
+            $err_msg .= "<p class='alert alert-danger' role='alert'>Zlý typ účtu!</p>";
 
 
-        if ($err_msg == ""){
+        if ($err_msg == "") {
 
             $sql = "SELECT id, username, password FROM account WHERE username = ?";
             $stmt = $db->prepare($sql);
@@ -65,57 +63,43 @@ try {
 
                 unset($stmt);
 
-                $err_msg = '<p class="p-3 mb-2 bg-success text-white">Teraz sa mozte prihlasit: <a class="btn btn-primary" href="index.php" role="button">Prihlas sa</a></p>';
+                $err_msg = '<p class="alert alert-success" role="alert">Teraz sa môžete prihlásiť: <a class="btn btn-primary" href="index.php" role="button">Prihlásiť sa</a></p>';
             }
         }
     }
     unset($db);
-
+} catch (PDOException $e) {
+    echo $e->getMessage();
+}
 ?>
-
-
-
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Semestrálne zadanie</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link href="../style.css" rel="stylesheet">
 </head>
-<body class="bg-secondary" style="--bs-bg-opacity: .2;">
-    <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
-        <a class="navbar-brand ml-1" href="../index.php">Final</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="btn btn-outline-primary" href="../index.php">Final</a>
-                </li>
-                <li class="nav-item">
-                    <a class="btn btn-outline-primary ml-1" href="#">EMPTY</a>
-                </li>
-                <li class="nav-item">
-                    <a class="btn btn-outline-primary ml-1" href="#">EMPTY</a>
-                </li>
 
-                <li class="nav-item">
-                    <a class="btn btn-outline-primary ml-1" href="index.php">Prihlás sa</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+<body>
+    <?php
+    if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+        include '../components/loggedin_menu.php';
+    } elseif (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
+        include '../components/loggedin_menu.php';
+    } else {
+        include '../components/loggedout_menu.php';
+    }
+    ?>
 
-    <div class="container-md">
-        <h1>Registruj sa</h1>
+    <div class="container w-25 mt-5">
+        <h1>Zaregistruj sa</h1>
 
         <?php
-            echo $err_msg;
+        echo $err_msg;
         ?>
 
         <form action="register.php" method="post">
@@ -130,29 +114,27 @@ try {
             </div>
 
             <div class="mb-3">
-                <label for="InputUsername" class="form-label">Prihlasovacie Meno: </label>
+                <label for="InputUsername" class="form-label">Prihlasovacie meno: </label>
                 <input type="text" name="username" class="form-control" id="InputUsername" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" required>
             </div>
 
             <div class="mb-3">
-                <label for="AccountType" class="form-label">Typ Uctu: </label>
+                <label for="AccountType" class="form-label">Typ účtu: </label>
                 <select name="type" id="AccountType" class="form-select">
-                    <option value="Student" selected>Ziak</option>
-                    <option value="Teacher">Ucitel</option>
+                    <option value="Student" selected>Žiak</option>
+                    <option value="Teacher">Učiteľ</option>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="InputPassword" class="form-label">Heslo: </label>
-                <p>Heslo musi obsahov jedno male a jedno velke pismeno, jedno cislo a musi mat aspon 8 znakov</p>
-                <p>Heslo moze obsahovat iba Pismena a Cisla</p>
+                <p>Heslo musí obsahovať jedno malé a jedno veľké písmeno, jedno číslo a musí mať aspoň 8 znakov!</p>
+                <p>Heslo môže obsahovať iba písmená a čísla!</p>
                 <input type="password" name="password" class="form-control" id="InputPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Heslo musi obsahov jedno male a jedno velke pismeno, jedno cislo a musi mat aspon 8 znakov" onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" required>
             </div>
-
-            <button type="submit" class="btn btn-primary">Registuj sa</button>
-
+            <p>Už máš účet? <a href="index.php">Prihlás sa</a></p>
+            <button type="submit" class="btn btn-primary">Zaregistrovať sa</button>
         </form>
-        <span>Uz mas ucet? <a href="index.php">Prihlas sa</a> </span>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -160,11 +142,5 @@ try {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 </body>
+
 </html>
-
-<?php
-    } catch (PDOException $e){
-        echo $e->getMessage();
-    }
-
-?>
