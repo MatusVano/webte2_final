@@ -16,17 +16,21 @@ if ($_SESSION["type"] != "Student") {
     header("location: index.php");
 }
 
-try {
-    $id = $_GET['id'];
-    $query = 'SELECT * FROM `test` WHERE `id` = ' . $id . ' LIMIT 1';
-    $stmt = $db->query($query);
-    $task = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (empty($task)) {
-        header("location: index.php");
+if (isset($_GET['id'])) {
+    try {
+        $id = $_GET['id'];
+        $query = 'SELECT * FROM `test` WHERE `id` = ' . $id . ' LIMIT 1';
+        $stmt = $db->query($query);
+        $task = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if (empty($task)) {
+            header("location: index.php");
+        }
+    } catch (PDOException $e) {
+        echo $e->getMessage();
     }
-} catch (PDOException $e) {
-    echo $e->getMessage();
+} else {
+    header("location: index.php");
 }
 ?>
 
@@ -44,9 +48,9 @@ try {
     <link href="https://cdn.datatables.net/1.13.3/css/dataTables.bootstrap5.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet">
-    
+
     <style>
-        .container > span:nth-child(2) > span:nth-child(1) > span:nth-child(2) {
+        .container>span:nth-child(2)>span:nth-child(1)>span:nth-child(2) {
             display: inline-block !important;
             margin-inline: 5px;
         }
@@ -80,17 +84,15 @@ try {
 
             <h2 class="mt-5">Vaše riešenie:</h2>
             <div class="w-50">
-                <form>
-                    <math-field id="answer" style="width:100%;">
-                        <?php
-                        if ($task["answer"] != null) {
-                            echo $task["answer"];
-                        }
-                        ?>
-                    </math-field>
-                    <a class="btn btn-primary mt-3" onclick="saveAnswer();" type="submit">Uložiť</a>
-                    <button disabled id="submit-btn" type="submit" class="btn btn-success mt-3">Odovzdať</button>
-                </form>
+                <math-field name="answer" id="answer" style="width:100%;">
+                    <?php
+                    if ($task["answer"] != null) {
+                        echo $task["answer"];
+                    }
+                    ?>
+                </math-field>
+                <a class="btn btn-primary mt-3" onclick="saveAnswer();">Uložiť</a>
+                <button disabled id="submit-btn" class="btn btn-success mt-3" onclick="submitAnswer();">Odovzdať</button>
             </div>
         </section>
     </main>
@@ -137,6 +139,11 @@ try {
             }).then(response => response.json()).then(data => {
                 console.log(data);
             })
+        }
+
+        function submitAnswer() {
+            // TODO: submit answer
+            
         }
     </script>
 </body>
