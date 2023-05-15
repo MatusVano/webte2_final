@@ -83,7 +83,7 @@ try {
 <main class="mb-5">
     <section class="container w-25 mt-5">
         <?php
-            echo $err_msg;
+        echo $err_msg;
         ?>
     </section>
 
@@ -137,7 +137,7 @@ try {
                     echo '<td>';
                     echo '<a href="taskDetail.php?id=' . $task["id"] . '" class="btn btn-primary">Riešiť</a>';
                     if ($task["answer"]) {
-                        echo '<a href="taskDetail.php?id=' . $task["id"] . '" class="btn btn-success ms-2">Odovzdať</a>';
+                        echo '<button id="task-' . $task["id"] . '" class="btn btn-success ms-2" onclick="submitAnswer();">Odovzdať</button>';
                     }
                     echo '</td>';
                     echo '</tr>';
@@ -218,4 +218,10 @@ try {
             }
         });
     });
+
+    function submitAnswer() {
+        const taskId = event.target.id.split("-")[1];
+
+        // TODO: submit answer
+    }
 </script>
