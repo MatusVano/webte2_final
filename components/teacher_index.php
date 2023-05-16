@@ -14,7 +14,7 @@ try {
 
     $students = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
 
-} catch (PDOException $e){
+} catch (PDOException $e) {
     $err_msg .= "<p class='alert alert-danger' role='alert'>Nepodarilo sa načítať záznamy!</p>";
 }
 ?>
@@ -41,7 +41,7 @@ try {
             </thead>
             <tbody>
                 <?php
-//                echo '<a href="taskDetail.php?id=' . $task["id"] . '" class="btn btn-primary">Riešiť</a>';
+                //                echo '<a href="taskDetail.php?id=' . $task["id"] . '" class="btn btn-primary">Riešiť</a>';
                 foreach ($students as $student) {
                     echo '<tr><td><a href="studentReport.php?id=' . $student['id'] . '">' . $student['id'] . '</a></td>';
                     echo '<td><a href="studentReport.php?id=' . $student['id'] . '">' . $student['first_name'] . '</a></td>';
@@ -54,6 +54,8 @@ try {
             </tbody>
         </table>
     </section>
+    <br>
+    <button id="exportButton" class="btn btn-light mx-auto mt-6 d-block">Exportovať do CSV</button>
 </main>
 
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -86,4 +88,37 @@ try {
             }
         });
     });
+    function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll('table tr');
+  
+    for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll('td, th');
+    
+    for (var j = 0; j < cols.length; j++) {
+      var cellValue = cols[j].innerText;
+      var encodedValue = encodeURIComponent(cellValue);
+      row.push(encodedValue);
+    }
+    
+    csv.push(row.join(','));
+    }
+  
+  
+    var csvContent = csv.join('\n');
+  
+  
+    var link = document.createElement('a');
+    link.href = 'data:text/csv;charset=utf-8,' + '\uFEFF' + csvContent;
+    link.target = '_blank';
+    link.download = filename + '.csv';
+    link.click();
+    }
+
+
+    var tableExportButton = document.getElementById('exportButton');
+    tableExportButton.addEventListener('click', function() {
+    exportTableToCSV('export');
+    });
+
 </script>
