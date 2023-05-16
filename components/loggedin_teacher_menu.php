@@ -5,6 +5,7 @@
                 <li><a href="index.php" class="nav-link px-2 text-white">Domov</a></li>
                 <li><a href="uploadFile.php" class="nav-link px-2 text-white">Nahraj súbor z úlohami</a></li>
                 <li><a href="editDeadline.php" class="nav-link px-2 text-white">Uprav súbor z úlohami</a></li>
+                <li><a href="teacherInstructions.php" class="nav-link px-2 text-white">Návod</a></li>
             </ul>
 
             <div class="text-end">
