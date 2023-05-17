@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 $poly1 = "((7*s+10))/(2*s^3+11*s^2+12*s+10)";
 $poly2 = "((7*s+10))/(2*s^3+11*s^2+12*s+10)";
 $maxima_executable = '/usr/bin/maxima'; // cesta k maxime
@@ -63,13 +64,15 @@ $stmt = $db->prepare($sql);
 $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Check if any rows were returned
+// potiahni z databazy solution a answer, daj ich do funkcie 
 if (count($rows) > 0) {
     foreach ($rows as $row) {
       echo "RAW solution". $row['solution'] . "<br>";
       echo "Parsed solution".latexToMaxima($row['solution']) . "<br>";
       echo "Answer from student".$row['answer'] . "<br>";
       echo "Parsed answer".latexToMaxima($row['answer']) . "<br>";
+
+      //porovnavanie
     }
   } else {
     echo "No results found";
