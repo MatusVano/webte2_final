@@ -75,8 +75,6 @@ try {
             ?>
             <div class="container mt-3 border border-3 border-dark rounded text-center">
 
-
-
                 <h4>Zadanie:</h4>
                 <span>
                     <?php
