@@ -70,7 +70,7 @@ include 'components/loggedin_teacher_menu.php';
 
             <div class="mb-3">
                 <label for="InputFile" class="form-label">Vybrať súbor: </label>
-                <select name="file_id" id=InputFile" class="form-select">
+                <select name="file_id" id="InputFile" class="form-select">
                     <?php
                     foreach ($files as $file){
                         echo '<option value="' . $file['id'] . '">' . str_replace("uploads/", "", $file['source']) . '</option>';
@@ -81,7 +81,7 @@ include 'components/loggedin_teacher_menu.php';
 
             <div class="mb-3">
                 <label for="InputActive" class="form-label">Aktívny? </label>
-                <select name="active" id=InputActive" class="form-select">
+                <select name="active" id="InputActive" class="form-select">
                     <option value="1" selected>ÁNO</option>
                     <option value="0">NIE</option>
                 </select>
@@ -97,7 +97,7 @@ include 'components/loggedin_teacher_menu.php';
                 <input type="number" name="points" class="form-control" id="Points" required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Nahrať súbor</button>
+            <button type="submit" class="btn btn-primary">Upraviť súbor</button>
         </form>
 
     </section>
