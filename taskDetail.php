@@ -54,6 +54,10 @@ if (isset($_GET['id'])) {
             display: inline-block !important;
             margin-inline: 5px;
         }
+        section.container > span:nth-child(2) > span {
+            display: inline-block !important;
+            margin-inline: 5px;
+        }
     </style>
 </head>
 
@@ -73,7 +77,12 @@ if (isset($_GET['id'])) {
             <h2>Zadanie:</h2>
             <span>
                 <?php
-                echo str_replace("$", "$$", $task["question"]);
+                $question = str_replace("$", "$$", $task["question"]);
+                $question = str_replace("\begin{equation*}", "$$", $question);
+                $question = str_replace("\\end{equation*}", "$$", $question);
+                $question = str_replace("\\", "", $question);
+                $question = str_replace("dfrac", "\dfrac", $question);
+                echo $question;
                 if ($task["image"] != null) {
                     echo '<img src="uploads/images/' . basename($task["image"]) . '" class="img-fluid mt-5" alt="task image">';
                 }
@@ -101,6 +110,7 @@ if (isset($_GET['id'])) {
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/tex2max@1.3.1/lib/tex2max.js"></script>
     <script>
         $(document).ready(function() {
             function checkMathField() {
@@ -127,7 +137,7 @@ if (isset($_GET['id'])) {
         function saveAnswer() {
             let answer = document.getElementById("answer").value;
             let id = <?php echo $task["id"]; ?>;
-            fetch("utils/save_answer.php", {
+            fetch("api/save_answer.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -142,8 +152,25 @@ if (isset($_GET['id'])) {
         }
 
         function submitAnswer() {
-            // TODO: submit answer
-            
+            let answer = document.getElementById("answer").value;
+            let id = <?php echo $task["id"]; ?>;
+            fetch("api/submit_answer.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    answer: answer,
+                    id: id
+                })
+            }).then(response => response.json()).then(data => {
+                console.log(data);
+                if (data["status"] == "ok") {
+                    window.location.href = "taskSolution.php?id=<?php echo $task["id"]; ?>";
+                } else {
+                    alert("Nastala chyba pri odovzdávaní riešenia");
+                }
+            })
         }
     </script>
 </body>
