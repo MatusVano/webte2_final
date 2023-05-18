@@ -33,7 +33,7 @@ try {
                 <tr>
                     <th>ID študenta</th>
                     <th>Meno študenta</th>
-                    <th>Prizvisko študenta</th>
+                    <th>Priezvisko študenta</th>
                     <th>Počet vygenerovaných úloh</th>
                     <th>Počet odovzdaných úloh</th>
                     <th>Počet získaných bodov</th>
