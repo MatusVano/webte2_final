@@ -25,16 +25,17 @@ try {
     $stmt->execute([$_GET['id']]);
     $student_tests = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-//    echo'<pre>';
-////    var_dump($student);
-//    var_dump($student_tests);
-//    echo'</pre>';
-} catch (PDOException $e){
+    //    echo'<pre>';
+    ////    var_dump($student);
+    //    var_dump($student_tests);
+    //    echo'</pre>';
+} catch (PDOException $e) {
     $err_msg .= "<p class='alert alert-danger' role='alert'>Nepodarilo sa načítať záznamy!</p>";
 }
 ?>
 <!DOCTYPE html>
 <html lang="sk">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -51,6 +52,14 @@ try {
         .container>span:nth-child(2)>span:nth-child(1)>span:nth-child(2) {
             display: inline-block !important;
             margin-inline: 5px;
+        }
+
+        div.container>span:nth-child(2)>span {
+            display: inline-block !important;
+            margin-inline: 5px;
+        }
+        div.container > p:nth-child(6) > span:nth-child(1) > span:nth-child(2) {
+            justify-content: center;
         }
     </style>
 </head>
@@ -73,34 +82,56 @@ try {
             <?php
             foreach ($student_tests as $task) {
             ?>
-            <div class="container mt-3 border border-3 border-dark rounded text-center">
+                <div class="container mt-3 border border-3 border-dark rounded text-center">
 
-                <h4>Zadanie:</h4>
-                <span>
-                    <?php
-                    echo str_replace("$", "$$", $task["question"]);
-                    if ($task["image"] != null) {
-                        echo '<img src="uploads/images/' . basename($task["image"]) . '" class="img-fluid mt-5" alt="task image">';
-                    }
+                    <h4>Zadanie:</h4>
+                    <span>
+                        <?php
+                        $question = str_replace("$", "$$", $task["question"]);
+                        $question = str_replace("\begin{equation*}", "$$", $question);
+                        $question = str_replace("\\end{equation*}", "$$", $question);
+                        $question = str_replace("\\", "", $question);
+                        $question = str_replace("dfrac", "\dfrac", $question);
+                        echo $question;
+                        if ($task["image"] != null) {
+                            echo '<img src="uploads/images/' . basename($task["image"]) . '" class="img-fluid mt-5" alt="task image">';
+                        }
 
-                    ?>
-                </span>
+                        ?>
+                    </span>
 
-                <h4>Súbor:</h4>
-                <p><?php echo str_replace("uploads/", "", $task['source']); ?></p>
+                    <h4>Súbor:</h4>
+                    <p><?php echo str_replace("uploads/", "", $task['source']); ?></p>
 
-                <h4>Odpoveď:</h4>
-                <p><?php echo $task['answer']; ?></p>
+                    <h4>Odpoveď:</h4>
+                    <p><?php
+                        if ($task["answer"] != null) {
+                            $answer = str_replace("$", "$$", $task["answer"]);
+                            $answer = str_replace("\begin{equation*}", "$$", $answer);
+                            $answer = str_replace("\\end{equation*}", "$$", $answer);
 
-                <h4>Správnosť Odpovede:</h4>
-                <p><?php if ($task['points_gained'] > 0)
-                        echo "Správny";
-                    else
-                        echo "Nesprávna"; ?></p>
+                            if (substr($answer, 0, 2) !== '$$') {
+                                $answer = '$$' . $answer;
+                            }
+                            if (substr($answer, -2) !== '$$') {
+                                $answer .= '$$';
+                            }
 
-                <h3>Počet získaných bodov:</h3>
-                <p><?php echo $task['points_gained'] . "/" . $task['points']; ?></p>
-            </div>
+                            echo $answer;
+                        } else {
+                            echo "Žiadna odpoveď";
+                        }
+                        ?></p>
+
+                    <h4>Správnosť Odpovede:</h4>
+                    <p><?php if ($task['points_gained'] > 0)
+                            echo "Správny";
+                        else
+                            echo "Nesprávna"; ?></p>
+
+                    <h3>Počet získaných bodov:</h3>
+                    <p><?php echo $task['points_gained'] . "/" . $task['points']; ?></p>
+                </div>
             <?php
             }
             ?>
@@ -118,4 +149,5 @@ try {
         );
     </script>
 </body>
+
 </html>
