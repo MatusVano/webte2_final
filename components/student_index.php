@@ -18,14 +18,15 @@ if (!empty($_POST) && !empty($_POST["user_id"]) && !empty($_POST["files"])) {
         $stmt = $db->prepare("INSERT INTO test (student_id, question, image, solution, file_id) VALUES (:user_id, :task, :image, :solution, :file_id)");
 
         foreach ($parsed_files as $file) {
-            foreach ($file["tasks"] as $task) {
-                $stmt->bindParam(':user_id', $_POST["user_id"]);
-                $stmt->bindParam(':task', $task["task"]);
-                $stmt->bindParam(':image', $task["image"]);
-                $stmt->bindParam(':solution', $task["solution"]);
-                $stmt->bindParam(':file_id', $file["id"]);
-                $stmt->execute();
-            }
+            // Get a random task from the current file
+            $random_task = $file["tasks"][array_rand($file["tasks"])];
+
+            $stmt->bindParam(':user_id', $_POST["user_id"]);
+            $stmt->bindParam(':task', $random_task["task"]);
+            $stmt->bindParam(':image', $random_task["image"]);
+            $stmt->bindParam(':solution', $random_task["solution"]);
+            $stmt->bindParam(':file_id', $file["id"]);
+            $stmt->execute();
         }
 
         // refresh page
@@ -114,26 +115,26 @@ try {
             <thead>
                 <tr>
                     <th>Zdroj príkladu</th>
-                    <th>Číslo príkladu</th>
+                    <!-- <th>Číslo príkladu</th> -->
                     <th>Možnosti</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                $counter = 1;
-                $previous = null;
+                // $counter = 1;
+                // $previous = null;
                 foreach ($student_tasks as $task) {
-                    if ($previous) {
-                        if ($task["source"] == $previous["source"]) {
-                            $counter++;
-                        } else {
-                            $counter = 1;
-                        }
-                    }
+                    // if ($previous) {
+                    //     if ($task["source"] == $previous["source"]) {
+                    //         $counter++;
+                    //     } else {
+                    //         $counter = 1;
+                    //     }
+                    // }
 
                     echo '<tr>';
                     echo '<td>' . pathinfo(basename($task["source"]), PATHINFO_FILENAME) . '</td>';
-                    echo '<td>' . $counter . '</td>';
+                    // echo '<td>' . $counter . '</td>';
                     echo '<td>';
                     echo '<a href="taskDetail.php?id=' . $task["id"] . '" class="btn btn-primary">Riešiť</a>';
                     if ($task["answer"]) {
@@ -141,7 +142,7 @@ try {
                     }
                     echo '</td>';
                     echo '</tr>';
-                    $previous = $task;
+                    // $previous = $task;
                 }
                 ?>
             </tbody>
@@ -154,33 +155,33 @@ try {
             <thead>
                 <tr>
                     <th>Zdroj príkladu</th>
-                    <th>Číslo príkladu</th>
+                    <!-- <th>Číslo príkladu</th> -->
                     <th>Získané body</th>
                     <th>Možnosti</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                $counter = 1;
-                $previous = null;
+                // $counter = 1;
+                // $previous = null;
                 foreach ($student_history as $task) {
-                    if ($previous) {
-                        if ($task["source"] == $previous["source"]) {
-                            $counter++;
-                        } else {
-                            $counter = 1;
-                        }
-                    }
+                    // if ($previous) {
+                        // if ($task["source"] == $previous["source"]) {
+                            // $counter++;
+                        // } else {
+                            // $counter = 1;
+                        // }
+                    // }
 
                     echo '<tr>';
                     echo '<td>' . pathinfo(basename($task["source"]), PATHINFO_FILENAME) . '</td>';
-                    echo '<td>' . $counter . '</td>';
+                    // echo '<td>' . $counter . '</td>';
                     echo '<td>' . $task["points_gained"] . '/' . $task["points"] . '</td>';
                     echo '<td>';
                     echo '<a href="taskSolution.php?id=' . $task["id"] . '" class="btn btn-primary">Zobraziť riešenie</a>';
                     echo '</td>';
                     echo '</tr>';
-                    $previous = $task;
+                    // $previous = $task;
                 }
                 ?>
             </tbody>
