@@ -44,10 +44,17 @@ function latexToMaxima($latex) {
     $latex = str_replace('(t-6)', '*(t-6)', $latex);
     $latex = str_replace('(t-4)', '*(t-4)', $latex);
     $latex = str_replace('(t-7)', '*(t-7)', $latex);
-      
-    //$latex = str_replace('\eta', '', $latex);
-    
+    //if found second = delete rest
+    $latex = preg_replace('/=/', '', $latex, 1);  
     return $latex;
 }
+
+$poly1='\begin{equation*}
+y(t)=\dfrac{1}{12} - \dfrac{7}{6}e^{-t} + \dfrac{1}{6}e^{-3t} - \dfrac{1}{12}e^{-4t} = 0.0833 -1.166 e^{-t} + 0.1666 e^{-3t} - 0.0833 e^{-4t}
+\end{equation*}';
+$poly2='y(t)=\dfrac{1}{12} - \dfrac{7}{6}e^{-t} + \dfrac{1}{6}e^{-3t} - \dfrac{1}{12}e^{-4t}';
+
+checkAns($poly1,$poly2);
+
 ?>
 
