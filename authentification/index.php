@@ -34,7 +34,7 @@ try {
                     // Uzivatel existuje, skontroluj heslo.
                     $row = $stmt->fetch();
                     $hashed_password = $row["password"];
-
+                    
                     if (password_verify($_POST['password'], $hashed_password)) {
                         // Heslo je spravne.
 

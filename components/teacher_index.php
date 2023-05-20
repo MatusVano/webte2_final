@@ -13,7 +13,6 @@ try {
     $stmt_students = $db->query($query_students);
 
     $students = $stmt_students->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (PDOException $e) {
     $err_msg .= "<p class='alert alert-danger' role='alert'>Nepodarilo sa načítať záznamy!</p>";
 }
@@ -88,37 +87,38 @@ try {
             }
         });
     });
+
     function exportTableToCSV(filename) {
-    var csv = [];
-    var rows = document.querySelectorAll('table tr');
-  
-    for (var i = 0; i < rows.length; i++) {
-        var row = [], cols = rows[i].querySelectorAll('td, th');
-    
-    for (var j = 0; j < cols.length; j++) {
-      var cellValue = cols[j].innerText;
-      var encodedValue = encodeURIComponent(cellValue);
-      row.push(encodedValue);
-    }
-    
-    csv.push(row.join(','));
-    }
-  
-  
-    var csvContent = csv.join('\n');
-  
-  
-    var link = document.createElement('a');
-    link.href = 'data:text/csv;charset=utf-8,' + '\uFEFF' + csvContent;
-    link.target = '_blank';
-    link.download = filename + '.csv';
-    link.click();
+        var csv = [];
+        var rows = document.querySelectorAll('table tr');
+
+        for (var i = 0; i < rows.length; i++) {
+            var row = [],
+                cols = rows[i].querySelectorAll('td, th');
+
+            for (var j = 0; j < cols.length; j++) {
+                var cellValue = cols[j].innerText;
+                var encodedValue = encodeURIComponent(cellValue);
+                row.push(encodedValue);
+            }
+
+            csv.push(row.join(','));
+        }
+
+
+        var csvContent = csv.join('\n');
+
+
+        var link = document.createElement('a');
+        link.href = 'data:text/csv;charset=utf-8,' + '\uFEFF' + csvContent;
+        link.target = '_blank';
+        link.download = filename + '.csv';
+        link.click();
     }
 
 
     var tableExportButton = document.getElementById('exportButton');
     tableExportButton.addEventListener('click', function() {
-    exportTableToCSV('export');
+        exportTableToCSV('export');
     });
-
 </script>

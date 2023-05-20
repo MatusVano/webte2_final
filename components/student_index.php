@@ -166,11 +166,11 @@ try {
                 // $previous = null;
                 foreach ($student_history as $task) {
                     // if ($previous) {
-                        // if ($task["source"] == $previous["source"]) {
-                            // $counter++;
-                        // } else {
-                            // $counter = 1;
-                        // }
+                    // if ($task["source"] == $previous["source"]) {
+                    // $counter++;
+                    // } else {
+                    // $counter = 1;
+                    // }
                     // }
 
                     echo '<tr>';
@@ -222,7 +222,21 @@ try {
 
     function submitAnswer() {
         const taskId = event.target.id.split("-")[1];
-
-        // TODO: submit answer
+        fetch("api/submit_answer.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: taskId
+            })
+        }).then(response => response.json()).then(data => {
+            console.log(data);
+            if (data["status"] == "ok") {
+                window.location.href = "taskSolution.php?id=" + taskId;
+            } else {
+                alert("Nepodarilo sa odovzdať príklad");
+            }
+        })
     }
 </script>

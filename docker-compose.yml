@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  web:
+    image: nginx:1.18.0
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./php:/var/www/html
+    ports:
+      - "80:80"
+    depends_on:
+      - php
+      - db
+
+  php:
+    image: php:8.2.6-fpm
+    volumes:
+      - ./php:/var/www/html
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: xkissj
+      MYSQL_DATABASE: final
+      MYSQL_USER: xkissj
+      MYSQL_PASSWORD: mypassword
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2.1
+    environment:
+      PMA_HOST: db
+      PMA_USER: xkissj
+      PMA_PASSWORD: mypassword
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

@@ -28,7 +28,7 @@ try {
         header("location: index.php");
     }
 
-    if ($task["points_gained"] == NULL) {
+    if ($task["points_gained"] === NULL) {
         header("location: index.php");
     }
 
@@ -52,9 +52,13 @@ try {
     <link href="https://cdn.datatables.net/1.13.3/css/dataTables.bootstrap5.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet">
-    
+
     <style>
-        .container > span:nth-child(2) > span:nth-child(1) > span:nth-child(2) {
+        .container>span:nth-child(2)>span:nth-child(1)>span:nth-child(2) {
+            display: inline-block !important;
+            margin-inline: 5px;
+        }
+        section.container > span:nth-child(2) > span {
             display: inline-block !important;
             margin-inline: 5px;
         }
@@ -77,7 +81,12 @@ try {
             <h2>Zadanie:</h2>
             <span>
                 <?php
-                echo str_replace("$", "$$", $task["question"]);
+                $question = str_replace("$", "$$", $task["question"]);
+                $question = str_replace("\begin{equation*}", "$$", $question);
+                $question = str_replace("\\end{equation*}", "$$", $question);
+                $question = str_replace("\\", "", $question);
+                $question = str_replace("dfrac", "\dfrac", $question);
+                echo $question;
                 if ($task["image"] != null) {
                     echo '<img src="uploads/images/' . basename($task["image"]) . '" class="img-fluid mt-5" alt="task image">';
                 }
@@ -89,7 +98,18 @@ try {
             <span>
                 <?php
                 if ($task["answer"] != null) {
-                    echo str_replace("$", "$$", $task["answer"]);
+                    $answer = str_replace("$", "$$", $task["answer"]);
+                    $answer = str_replace("\begin{equation*}", "$$", $answer);
+                    $answer = str_replace("\\end{equation*}", "$$", $answer);
+
+                    if (substr($answer, 0, 2) !== '$$') {
+                        $answer = '$$' . $answer;
+                    }
+                    if (substr($answer, -2) !== '$$') {
+                        $answer .= '$$';
+                    }
+
+                    echo $answer;
                 } else {
                     echo "Neodovzdali ste žiadne riešenie.";
                 }

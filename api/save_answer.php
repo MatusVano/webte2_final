@@ -13,6 +13,11 @@ $data = json_decode($json_str, true);
 
 // Save answer from json to db
 if (isset($data["id"]) && isset($data["answer"])) {
+    echo json_encode(saveAnswer($db, $data));
+    exit();
+}
+
+function saveAnswer($db, $data) {
     $task_id = $data["id"];
     $answer = $data["answer"];
 
@@ -28,10 +33,10 @@ if (isset($data["id"]) && isset($data["answer"])) {
 
         $response_data = ['status' => 'ok'];
         header('Content-Type: application/json');
-        echo json_encode($response_data);
+        return $response_data;
     } catch (PDOException $e) {
         $response_data = ['status' => 'error', 'message' => $e->getMessage()];
         header('Content-Type: application/json');
-        echo json_encode($response_data);
+        return $response_data;
     }
 }

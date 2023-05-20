@@ -6,8 +6,8 @@
             </ul>
 
             <div class="text-end">
-                <a href="authentification/index.php" class="btn btn-outline-light me-2">Prihlásiť sa</a>
-                <a href="authentification/register.php" class="btn btn-warning">Registrovať sa</a>
+                <a href="index.php" class="btn btn-outline-light me-2">Prihlásiť sa</a>
+                <a href="register.php" class="btn btn-warning">Registrovať sa</a>
             </div>
         </div>
     </div>
