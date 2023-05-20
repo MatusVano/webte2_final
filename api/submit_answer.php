@@ -100,9 +100,11 @@ function checkAns($poly1, $poly2)
 
     $maxima_output = shell_exec($maxima_executable . ' -b -q -r "' . $maxima_command . '"');
     $matches = [];
+
     if ($maxima_output != null) {
         preg_match('/\(%o\d+\)\s*(-?\d+\.?\d*)/', $maxima_output, $matches);
     }
+
     $outcome = isset($matches[1]) ? floatval($matches[1]) : null;
 
     if ($outcome == "0") {
